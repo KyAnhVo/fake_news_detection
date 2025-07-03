@@ -15,16 +15,18 @@ class Vocab:
     param_list: Dict[str, int]
     changed: bool
 
-    def __init__(self, true_file: str, fake_file: str, active_words_count: int = 1000, title_weight: int = 2):
-        if not nltk.data.find('stopwords'):
+    def __init__(self, true_file: str, fake_file: str, active_words_count: int = 1000):
+        try:
+            nltk.data.find('corpora/stopwords')
+        except:
             nltk.download('stopwords')
         
-        self.TITLE_WEIGHT = title_weight
         self.active_vocab_count = active_words_count
         self.news = []
         self.all_vocab = {}
         self.active_vocab = {}
         self.param_list = {}
+        self.changed = False
 
         with open(file= true_file, mode= 'r', encoding= "UTF-8") as file:
             csv_reader = csv.DictReader(file)
@@ -46,6 +48,7 @@ class Vocab:
         
         stopword_set = set(stopwords.words('english'))
         # characters in title holds more weight than characters in actual text
+
         
         for news in self.news:
             # Note: to distinguish between title words and text words,
@@ -53,17 +56,17 @@ class Vocab:
             # and all text words are lowered (Hello -> hello)
 
             title, text, _ = news
-            title, text = re.findall(r'\w', title.upper()), re.findall(r'\w', text.lower())
-            
+            title, text = re.findall(r'\w+', title.upper()), re.findall(r'\w+', text.lower())
+
             for word in title:
                 if word in stopword_set:
                     continue
-                self.all_vocab[word] = 1
+                self.all_vocab[word] = self.all_vocab.get(word, 0) + 1
 
             for word in text:
                 if word in stopword_set:
                     continue
-                self.all_vocab[word] = 1
+                self.all_vocab[word] = self.all_vocab.get(word, 0) + 1
 
     def generate_active_vocab(self) -> None:
         if len(self.all_vocab) == 0:
@@ -78,8 +81,9 @@ class Vocab:
         x, y = [], []
         for title, text, is_fake_news in self.news:
             x_curr: List[int] = [0 for _ in range(self.active_vocab_count)]
-            y_curr: List[int] = [is_fake_news]
-            # process title
+            y_curr: int = is_fake_news
+
+            title, text = re.findall(r'\w+', title.upper()), re.findall(r'\w+', text.lower())
             for word in title + text:
                 if word in self.param_list:
                     x_curr[self.param_list[word]] = 1
@@ -87,3 +91,6 @@ class Vocab:
             y.append(y_curr)
 
         return x, y
+
+
+
