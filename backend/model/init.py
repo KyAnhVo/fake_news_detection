@@ -27,13 +27,14 @@ server_sock = socket.socket(socket.AddressFamily.AF_INET, socket.SOCK_STREAM)
 server_sock.bind(('localhost', 5000))
 
 server_sock.listen(1)
-
+print('--------listening--------')
 while True:
     comm, _ = server_sock.accept()
+    
     def send_json(jsonable):
         comm.send(json.dumps(jsonable).encode())
-        
-
+     
+    print('--------accepted connection--------')
     while True:
         data = comm.recv(BUFF_SIZE)
         if not data:
@@ -58,3 +59,13 @@ while True:
                 'status': 'ok',
                 'result': 'real' if res == 0 else 'fake',
                 })
+
+
+        if news['func'] == 'clear connection':
+            send_json({
+                'status': 'ok',
+                'msg': 'cleaning up, and close connection',
+                })
+            comm.close()
+            break
+
