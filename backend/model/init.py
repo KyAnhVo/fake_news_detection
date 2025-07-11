@@ -8,7 +8,8 @@ import json
 
 # Constants
 
-BUFF_SIZE = 16384 # 16kb
+BUFF_SIZE = 16384       # 16kb, assume probably nothing exceeds this.
+FAKE_NEWS_PORT = 5001   # just some random 4 numbers port that nobody uses anyways
 
 # Generate predictor (NB)
 
@@ -24,7 +25,7 @@ predictor = NB(x= torch.tensor(x), y= torch.tensor(y), k= 2)
 # Create a TCP socket binding to port 5000, only listen to localhost.
 
 server_sock = socket.socket(socket.AddressFamily.AF_INET, socket.SOCK_STREAM)
-server_sock.bind(('localhost', 5000))
+server_sock.bind(('localhost', FAKE_NEWS_PORT))
 
 server_sock.listen(1)
 print('--------listening--------')
@@ -32,10 +33,13 @@ while True:
     comm, _ = server_sock.accept()
     
     def send_json(jsonable):
-        comm.send(json.dumps(jsonable).encode())
+        comm.send((json.dumps(jsonable) + '\n').encode())
      
     print('--------accepted connection--------')
     while True:
+        # NOTE: assume BUFF_SIZE is probably enough, but
+        # if message grows in size, we probably need to have
+        # a function that takes in chunks.
         data = comm.recv(BUFF_SIZE)
         if not data:
             comm.close()
@@ -47,7 +51,7 @@ while True:
             continue
         
         # send 1 if is fake, 0 if is real
-        if news['func'] == 'predict':
+        if news['func'] == 'predict-fake-real':
             if 'title' not in news or 'text' not in news:
                 send_json({
                     'status': 'error',
@@ -68,4 +72,9 @@ while True:
                 })
             comm.close()
             break
+
+    print('--------closed connection--------')
+    make_new_conn = input("Get new connection? ")
+    if make_new_conn.lower()[0] != 'y':
+        break
 
