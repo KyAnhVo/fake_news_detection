@@ -36,45 +36,35 @@ while True:
         comm.send((json.dumps(jsonable) + '\n').encode())
      
     print('--------accepted connection--------')
-    while True:
-        # NOTE: assume BUFF_SIZE is probably enough, but
-        # if message grows in size, we probably need to have
-        # a function that takes in chunks.
-        data = comm.recv(BUFF_SIZE)
-        if not data:
-            comm.close()
-            break
-        try:
-            news = json.loads(data)
-        except json.JSONDecodeError:
-            send_json({'status': 'error', 'error': 'malformed json object received'})
-            continue
+
+    # NOTE: assume BUFF_SIZE is probably enough, but
+    # if message grows in size, we probably need to have
+    # a function that takes in chunks.
+    data = comm.recv(BUFF_SIZE)
+    if not data:
+        comm.close()
+        break
+    try:
+        news = json.loads(data)
+    except json.JSONDecodeError:
+        send_json({'status': 'error', 'error': 'malformed json object received'})
+        continue
         
-        # send 1 if is fake, 0 if is real
-        if news['func'] == 'predict_real_fake':
-            if 'title' not in news or 'text' not in news:
-                send_json({
-                    'status': 'error',
-                    'error': 'title or/and text key not in json for prediction'
-                    })
-                continue
+    # send {'status': 'ok', 'result': 'real' or 'fake'}
+    if news['func'] == 'predict_real_fake':
+        if 'title' not in news or 'text' not in news:
+            send_json({
+                'status': 'error',
+                'error': 'title or/and text key not in json for prediction'
+            })
+
+        else:
             res = predictor.predict(torch.tensor(vocab.get_parameter(news)))
             send_json({
                 'status': 'ok',
                 'result': 'real' if res == 0 else 'fake',
-                })
+            })
 
-
-        if news['func'] == 'clear connection':
-            send_json({
-                'status': 'ok',
-                'msg': 'cleaning up, and close connection',
-                })
-            comm.close()
-            break
-
+    comm.close()
     print('--------closed connection--------')
-    make_new_conn = input("Get new connection? ")
-    if make_new_conn.lower()[0] != 'y':
-        break
 

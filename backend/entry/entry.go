@@ -14,7 +14,7 @@ import (
 
 const FakeNewsPredictionContact string = "localhost:5000"
 
-// Used to handle critical errors that require the program
+// HandleCriticalError handles critical errors that require the program
 // to be stopped ASAP. Use sparingly.
 func HandleCriticalError(err error) {
 	if err == nil {
@@ -24,7 +24,7 @@ func HandleCriticalError(err error) {
 	os.Exit(1)
 }
 
-// Given that a request has the handle "/api/predict_real_fake",
+// PredictRealFakeHandler gets a POST request and
 // sends the function to localhost ip, port that links to fake_news model.
 func PredictRealFakeHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("----Accepted----")
@@ -77,8 +77,12 @@ func PredictRealFakeHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Send this to model via corresponding contact
 
-	bodyMap["func"] = "predict_real_fake"
-	msg, _ := json.Marshal(bodyMap)
+	msgToModelMap := map[string]string {
+		"func"	: "predict_real_fake",
+		"title"	:	bodyMap["title"],
+		"text"	:	bodyMap["text"],
+	}
+	msg, _ := json.Marshal(msgToModelMap)
 	fmt.Println(string(msg))
 	modelConn, err := net.Dial("tcp", FakeNewsPredictionContact)
 	if err != nil {
@@ -92,7 +96,7 @@ func PredictRealFakeHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Receive model answer, read result, send result back to user.
 
-	recvMsg, err := bufio.NewReader(modelConn).ReadString('\n')
+	recvMsg, _ := bufio.NewReader(modelConn).ReadString('\n')
 	fmt.Printf("%v\n", recvMsg)
 
 	var recvMsgMap map[string]string
