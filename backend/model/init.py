@@ -9,7 +9,7 @@ import json
 # Constants
 
 BUFF_SIZE = 16384       # 16kb, assume probably nothing exceeds this.
-FAKE_NEWS_PORT = 5001   # just some random 4 numbers port that nobody uses anyways
+FAKE_NEWS_PORT = 5000   # just some random 4 numbers port that nobody uses anyways
 
 # Generate predictor (NB)
 
@@ -51,7 +51,7 @@ while True:
             continue
         
         # send 1 if is fake, 0 if is real
-        if news['func'] == 'predict-fake-real':
+        if news['func'] == 'predict_real_fake':
             if 'title' not in news or 'text' not in news:
                 send_json({
                     'status': 'error',
