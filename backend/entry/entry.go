@@ -48,6 +48,8 @@ func PredictRealFakeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Println(string(bodyBytes))
+
 	// Get bodyMap from body, ensure json, ensure also 'title' and 'text' are
 	// keys of such json before sending it over to model
 
@@ -82,7 +84,11 @@ func PredictRealFakeHandler(w http.ResponseWriter, r *http.Request) {
 		"title"	:	bodyMap["title"],
 		"text"	:	bodyMap["text"],
 	}
-	msg, _ := json.Marshal(msgToModelMap)
+	msg, err := json.Marshal(msgToModelMap)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 	fmt.Println(string(msg))
 	modelConn, err := net.Dial("tcp", FakeNewsPredictionContact)
 	if err != nil {
