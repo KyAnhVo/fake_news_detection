@@ -1,0 +1,11 @@
+.container {
+    display: flex;
+}
+
+.empty_space {
+    flex: 1 1;
+}
+
+.center {
+    flex: 3 3;
+}
