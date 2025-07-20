@@ -1,0 +1,109 @@
+/**
+ * NAV BAR
+ */
+
+nav#nav_bar {
+    margin: 0;
+    padding: 0;
+
+    /**
+     * forcing our navbar to always stay on 
+     * top of the viewport
+     */
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10000;
+}
+
+nav#nav_bar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    
+    background-color: var(--sage);
+    border-radius: 8px;
+}
+
+nav#nav_bar li {
+    margin: 0;
+    padding: 0;
+    float: right;
+}
+
+nav#nav_bar ul.main_nav > li a,
+nav#nav_bar ul.main_nav > li h1 {
+    display: block;
+    color: var(--noir);
+    text-align: center;
+    margin: 0;
+    padding: 14px 16px;
+    text-decoration: none;
+
+    font-size: 20px;
+}
+
+nav#nav_bar li a:hover {
+    background-color: var(--moss);
+    color: var(--sage);
+}
+
+nav#nav_bar li a.active {
+    background-color: var(--ivory);
+    color: var(--noir);
+}
+
+/**
+ * Dropdown button
+ */
+
+nav#nav_bar ul.main_nav > li.dropdown {
+    float: right;
+    overflow: hidden;
+}
+
+nav#nav_bar ul.main_nav li.dropdown button.dropdown_btn {
+    border: none;
+    outline: none;
+    background-color: inherit;
+}
+
+nav#nav_bar ul.main_nav .dropdown button.dropdown_btn:hover {
+    background-color: var(--moss);
+}
+
+nav#nav_bar li.dropdown .dropdown_nav {
+    right: 0;
+    left: auto;
+    min-width: 160px;
+
+    /**
+     * Deco
+     */
+
+    background-color: var(--ivory);
+    color: var(noir);
+    
+    /**
+     * Hide when btn is not hovered
+     */
+
+    display: none;
+    position: absolute;
+} 
+
+nav#nav_bar .dropdown:hover .dropdown_nav {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+nav#navbar .dropdown_nav li {
+    display: block;
+    float: none;
+    margin: 0;
+    padding: 0;
+}

@@ -1,0 +1,41 @@
+/**
+ * CONSTANTS
+ */
+
+:root {
+    /* color pallete */
+    --ivory:    #E4E4DE; /* ethereal ivory */
+    --sage:     #C4C5BA; /* sophisticated sage */
+    --noir:     #1B1B1B; /* timeless noir */
+    --moss:     #595F39; /* muted moss */
+
+    /* MAIN PAGE FLEX */
+    --side-padding-outermost-flex: 1 1 20%;
+    --main-content-outermost-flex: 3 3 60%;
+}
+
+body {
+    padding-top: 64px;
+    background-color: var(--noir);
+    color: var(--ivory);
+}
+
+* {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/**
+ * MAIN PARTS AND PADDINGS
+ */
+
+#main_page {
+    display: flex;
+}
+
+#main_page div.side_padding {
+    flex: var(--side-padding-outermost-flex);
+}
+
+#main_page div.main_content {
+    flex: var(--main-content-outermost-flex);
+}
