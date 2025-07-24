@@ -15,6 +15,7 @@
     <title>News Categorization</title>
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/navbar.css">
+    <link rel="stylesheet" href="./css/inputting.css">
 </head>
 <body>
 
@@ -24,7 +25,7 @@
             <li style="float: left; background-color: #595F39;">
                 <h1 style="color: #E4E4DE;"> NEWS CATEGORIZATOR </h1>
             </li>
-            <li><a href=""> SOURCE CODE </a></li>
+            <li><a href="https://github.com/KyAnhVo/fake_news_detection.git"> SOURCE CODE </a></li>
             <li class="dropdown">
                 <a href="" class="dropdown_btn"> MODELS </a>
                 <ul class="dropdown_nav">
@@ -33,7 +34,7 @@
                     <li><a href="">Categorization</a></li>
                 </ul>
             </li>
-            <li><a href=""> HOME </a></li>
+            <li><a href="./index.html">HOME</a></li>
         </ul>
     </nav>
 
@@ -46,6 +47,17 @@
         <div class="main_content">
 
             <!-- Insert main content here -->
+            
+            <h1>Fake news detection </h1>
+            
+            <label for="title">Title:</label>
+            <textarea id="title" name="title" rows="1"></textarea>
+            <label for="text">Text:</label>
+            <textarea id="text" name="text" rows="10"></textarea>
+            <button onclick="is_fake_news()">Is it fake?</button>
+            <p id="running_notification"></p>           
+
+            <!-- Main content ends here -->
 
         </div>
         <div class="side_padding"></div>
