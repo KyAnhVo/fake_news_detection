@@ -10,9 +10,25 @@ import (
 	"os"
 )
 
-// Connections to reach models
+/**
+ * conns to models
+ */
 
 const FakeNewsPredictionContact string = "localhost:5000"
+
+/**
+ * Main function
+ */
+
+func main() {
+	http.HandleFunc("/api/predict_real_fake_news", PredictRealFakeHandler)
+	fmt.Println("----Listening----")
+	http.ListenAndServe(":80", nil)
+}
+
+/**
+ * Util function definitions
+ */
 
 // HandleCriticalError handles critical errors that require the program
 // to be stopped ASAP. Use sparingly.
@@ -24,18 +40,36 @@ func HandleCriticalError(err error) {
 	os.Exit(1)
 }
 
+func HandleCORS(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
+/**
+ * Handler function definition
+ */
+
 // PredictRealFakeHandler gets a POST request and
 // sends the function to localhost ip, port that links to fake_news model.
 func PredictRealFakeHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("----Accepted----")
 
-	// Ensure method is POST
+	if r.Method == http.MethodOptions {
+		HandleCORS(w, r)
+		return
+	}
 
-	if r.Method != "POST" {
+	if r.Method != http.MethodPost {
+		fmt.Println("not POST")
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("{\"error\": \"predict_real_fake_news requires POST method}"))
 		return
 	}
+
+	fmt.Println("----Is Post----")
 
 	// Get bodyBytes
 
@@ -133,12 +167,10 @@ func PredictRealFakeHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write(msgBytes)
 		return
 	}
+	
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
 	w.Write(sendbackMsg)
 }
 
-func main() {
-	http.HandleFunc("/api/predict_real_fake_news", PredictRealFakeHandler)
-	fmt.Println("----Listening----")
-	http.ListenAndServe(":80", nil)
-}
+
