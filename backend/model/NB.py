@@ -48,31 +48,48 @@ class NB:
 
 # for testing
 def main():
-    vocab = Vocab(true_file= './model/training_dataset/True_train.csv', fake_file= './model/training_dataset/Fake_train.csv', active_words_count= 1000)
+    vocab = Vocab(true_file= './training_dataset/True.csv', fake_file= './training_dataset/Fake.csv', active_words_count= 1000)
     x, y = vocab.get_training_data()
     predictor = NB(torch.tensor(x), torch.tensor(y), 2)
+    
+    phi: torch.Tensor = predictor.Phi
+    log_phi: torch.Tensor = torch.log(phi)
+    negate_log_phi: torch.Tensor = torch.log(1 - phi)
 
-    total, correct = 0, 0
-    with open(file= './model/training_dataset/True_test.csv') as true_file, open(file= './model/training_dataset/Fake_test.csv') as fake_file:
-        csv_true = csv.DictReader(true_file)
-        csv_fake = csv.DictReader(fake_file)
+    log_p: torch.Tensor = torch.log(predictor.P.T)
 
-        for row in csv_true:
-            news = {'title': row['title'], 'text': row['text']}
-            input_arr = vocab.get_parameter(news)
-            if predictor.predict(torch.tensor(input_arr)) == 0:
-                correct += 1
-            total += 1
+    with open(file = './training_dataset/export.csv', mode= 'w') as export_file:
+        write_export = csv.writer(export_file)
+        
+        # write m, n, k in 1 line
+        write_export.writerow([predictor.m, predictor.n, predictor.k])
+        
+        # write all of log_phi in 1 row
+        log_phi_row = []
+        for row in log_phi:
+            for item in row:
+                log_phi_row.append(item.item())
+        write_export.writerow(log_phi_row)
+
+        # write all of negate_log_phi in 1 row
+        negate_log_phi_row = []
+        for row in negate_log_phi:
+            for item in row:
+                negate_log_phi_row.append(item.item())
+        write_export.writerow(negate_log_phi_row)
+
+        # write all of p in 1 row
+        log_p_row = []
+        for item in log_p.squeeze():
+            log_p_row.append(item.item())
+        write_export.writerow(log_p_row)
+
+        # write all of active vocab in 1 row
+        word_index = [k for k, v in sorted(vocab.word_index_map.items(), key= lambda x: x[1])]
+        write_export.writerow(word_index)
+
 
         
-        for row in csv_fake:
-            news = {'title': row['title'], 'text': row['text']}
-            input_arr = vocab.get_parameter(news)
-            if predictor.predict(torch.tensor(input_arr)) == 1:
-                correct += 1
-            total += 1
-
-    print(correct / total)
                 
 if __name__ == '__main__':
     main()
