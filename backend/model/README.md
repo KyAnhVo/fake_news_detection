@@ -50,6 +50,11 @@ Socket socket = new Socket("10.0.0.2", 5000);
 
 ```
 
+Note: if all else fail, there is a way out: identify current machine's
+local IP address (like not the modem's public address) and hard code
+that address to the code, since we have given a way out by binding
+the tcp socket to all ports instead of localhost only for this use case.
+Ensure firewall accepts all inbounds on port 5000.
 
 
 ## Idea (shouldn't matter unless prof specifically asks for this):
