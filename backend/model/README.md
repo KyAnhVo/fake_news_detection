@@ -36,6 +36,22 @@ JSON response format, failure (microserver send to callee):
     "error": "error message"
 }
 
+## Reminder for AndroidSDK localhost:
+
+Android emulators do not read from localhost address 127.0.0.1,
+but instead should be sent to 10.0.0.2, i.e.:
+
+```java
+// WRONG
+Socket socket = new Socket("localhost", 5000);
+
+// CORRECT
+Socket socket = new Socket("10.0.0.2", 5000);
+
+```
+
+
+
 ## Idea (shouldn't matter unless prof specifically asks for this):
 
 ML algorithm:
