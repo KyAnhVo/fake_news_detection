@@ -20,8 +20,8 @@ Protocol: TCP
 JSON request format (callee send to microserver):
 {
     "func": "predict_real_fake",
-    "title": <title of news>,
-    "text": <text of news>
+    "title": "title of news",
+    "text": "text of news"
 }
 
 JSON response format, success (microserver send to callee):
@@ -33,7 +33,7 @@ JSON response format, success (microserver send to callee):
 JSON response format, failure (microserver send to callee):
 {
     "status": "error",
-    "error": <error message>
+    "error": "error message"
 }
 
 ## Idea (shouldn't matter unless prof specifically asks for this):
